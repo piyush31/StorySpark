@@ -2,3 +2,13 @@ flask==2.3.3
 flask-cors==4.0.0
 python-dotenv==1.0.0
 gunicorn==21.2.0
+requests==2.31.0
+typing-extensions==4.8.0
+pydub==0.25.1  # For audio processing
+google-cloud-texttospeech==2.14.1  # Google Cloud TTS (Chirp)
+google-generativeai==0.3.1  # Gemini API
+flask-sqlalchemy==3.1.1  # Database ORM
+flask-migrate==4.0.5  # Database migrations
+flask-jwt-extended==4.5.3  # JWT for authentication
+flask-bcrypt==1.0.1  # Password hashing
+email-validator==2.1.0  # For email validation

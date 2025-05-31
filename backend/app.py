@@ -1,8 +1,13 @@
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 from routes.api import api
+from routes.voice_api import voice_api
+from routes.auth_api import auth_api
+from models import init_db
 
 # Load environment variables from .env file
 load_dotenv()
@@ -10,11 +15,22 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__, static_folder='dist')
 
-# Enable CORS for all routes to allow frontend connections
+# Configure app
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', 'sqlite:///storyspark.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
+
+# Initialize extensions
 CORS(app)
+jwt = JWTManager(app)
+init_db(app)
 
 # Register blueprints
 app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(voice_api, url_prefix='/api/voice')
+app.register_blueprint(auth_api, url_prefix='/api/auth')
 
 @app.route('/')
 def hello_world():

@@ -1,0 +1,183 @@
+/* UserStories.css */
+.user-stories-container {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stories-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.stories-header h2 {
+  font-size: 1.8rem;
+  color: var(--primary-dark);
+  margin: 0;
+}
+
+.stories-container {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.stories-container.grid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.stories-container.list {
+  grid-template-columns: 1fr;
+}
+
+.story-card {
+  background-color: var(--white);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.story-info {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.story-card h3 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color);
+  font-size: 1.3rem;
+}
+
+.story-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.story-metadata span {
+  background-color: var(--light-bg);
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  color: var(--light-text);
+}
+
+.card-actions {
+  padding: 1rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.read-button, .download-button, .delete-button {
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  width: 100%;
+}
+
+.read-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.download-button {
+  background-color: var(--secondary-color);
+  color: var(--white);
+}
+
+.delete-button {
+  background-color: transparent;
+  border: 1px solid #f44336;
+  color: #f44336;
+}
+
+.read-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.download-button:hover {
+  background-color: #5a6fe6;
+}
+
+.delete-button:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+.download-button.downloaded {
+  background-color: #4CAF50;
+  cursor: default;
+}
+
+.empty-state {
+  background-color: var(--white);
+  border-radius: 10px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.empty-state h2 {
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  margin-bottom: 2rem;
+  color: var(--light-text);
+}
+
+.primary-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.primary-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.loading, .error {
+  background-color: var(--white);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.error {
+  color: #f44336;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .stories-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .stories-container.grid {
+    grid-template-columns: 1fr;
+  }
+}
