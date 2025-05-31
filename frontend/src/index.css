@@ -1,0 +1,24 @@
+/* Global CSS for the app */
+:root {
+  font-size: 16px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    scroll-behavior: smooth;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Remove default button styles */
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  appearance: button;
+}
