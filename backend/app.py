@@ -2,6 +2,7 @@ from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import os
+import time
 from datetime import timedelta
 from dotenv import load_dotenv
 from routes.api import api
@@ -61,6 +62,30 @@ def serve_static_audio(filename):
             'status': 'error',
             'message': f'Error serving file: {str(e)}'
         }), 500
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for load balancers and monitoring"""
+    try:
+        # Basic health checks
+        health_status = {
+            'status': 'healthy',
+            'service': 'StorySpark',
+            'version': '1.0.0',
+            'timestamp': time.time(),
+            'environment': os.environ.get('FLASK_ENV', 'development')
+        }
+        
+        # Check if critical services are available
+        # You can add more checks here (database, external APIs, etc.)
+        
+        return jsonify(health_status), 200
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': time.time()
+        }), 503
 
 @app.route('/')
 def hello_world():

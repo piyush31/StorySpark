@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  storyspark:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    ports:
+      - "80:5001"
+      - "443:5001"
+    environment:
+      - FLASK_ENV=production
+      - PORT=5001
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/service-account.json
+    volumes:
+      - ./secrets:/app/credentials:ro
+      - storyspark_data:/app/backend/data
+      - storyspark_logs:/app/backend/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Nginx reverse proxy for SSL termination
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - storyspark
+    restart: unless-stopped
+    profiles: ["with-nginx"]
+
+volumes:
+  storyspark_data:
+  storyspark_logs:
