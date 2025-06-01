@@ -1,7 +1,7 @@
 // Voice service for handling text-to-speech and story narration
 import axios from 'axios';
 import { getToken } from './authService';
-import { API_BASE_URL } from './config';
+import { API_BASE_URL, STATIC_BASE_URL } from './config';
 
 class VoiceService {
   constructor() {
@@ -58,11 +58,10 @@ class VoiceService {
       // Get the story data and ensure it has all required fields
       const storyData = response.data.story;
       
-      // Make sure audio path is absolute
-      if (storyData.audio_path && !storyData.audio_path.startsWith('http')) {
-        if (!storyData.audio_path.startsWith('/')) {
-          storyData.audio_path = `/${storyData.audio_path}`;
-        }
+      // The backend now returns properly formatted paths starting with '/'
+      // No additional processing needed for paths starting with '/'
+      if (storyData.audio_path) {
+        console.log('Audio path from backend:', storyData.audio_path);
       }
       
       // Return the story data

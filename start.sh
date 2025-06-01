@@ -4,6 +4,11 @@
 
 echo "Starting StorySpark services..."
 
+# Set environment variables for API keys - use one key for both services
+export GEMINI_KEY="${GEMINI_KEY:-your-api-key-here}"
+
+echo "Using GEMINI_KEY with length: ${#GEMINI_KEY}"
+
 # Start the backend
 cd backend
 source venv/bin/activate

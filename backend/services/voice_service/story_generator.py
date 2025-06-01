@@ -120,6 +120,9 @@ class StoryGenerator:
                 logger.warning("Gemini model not available, using fallback story generation")
                 story_title = f"The Adventure in the {setting or 'Magical Land'}"
                 story_text = self._generate_fallback_story(theme, setting, child_name, age_group)
+                
+                # Log the fallback story
+                logger.info(f"Generated fallback story with title: {story_title} and text: {story_text[:100]}...")
         except Exception as e:
             logger.error(f"Error generating story with Gemini: {str(e)}")
             # Fallback story if generation fails

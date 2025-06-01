@@ -23,6 +23,8 @@ const AudioPlayer = ({ audioUrl, title, onEnded }) => {
     const setAudioData = () => {
       setDuration(audio.duration);
       setLoading(false);
+      setError(null);
+      console.log("Audio loaded successfully:", audioUrl);
       
       // Generate a simulated waveform
       generateSimulatedWaveform();
@@ -36,9 +38,9 @@ const AudioPlayer = ({ audioUrl, title, onEnded }) => {
     };
     
     const handleError = (e) => {
-      setError("Error loading audio");
+      console.error("Audio error:", e, "URL:", audioUrl);
+      setError(`Error loading audio. Please try again. (${audioUrl})`);
       setLoading(false);
-      console.error("Audio error:", e);
     };
     
     // Add event listeners
@@ -48,8 +50,28 @@ const AudioPlayer = ({ audioUrl, title, onEnded }) => {
     audio.addEventListener('error', handleError);
     
     // Set audio source
-    audio.src = audioUrl;
-    audio.load();
+    if (audioUrl) {
+      console.log("Loading audio from URL:", audioUrl);
+      try {
+        // Validate the URL - handle both absolute and relative URLs
+        if (audioUrl.startsWith('http') || audioUrl.startsWith('//')) {
+          new URL(audioUrl); // Validate absolute URLs
+        } else if (audioUrl.startsWith('/')) {
+          // Relative URLs are valid, no validation needed
+        } else {
+          throw new Error("Invalid URL format");
+        }
+        audio.src = audioUrl;
+        audio.load();
+      } catch (urlError) {
+        console.error("Invalid audio URL:", urlError, audioUrl);
+        setError(`Invalid audio URL format: ${audioUrl}`);
+        setLoading(false);
+      }
+    } else {
+      setError("No audio URL provided");
+      setLoading(false);
+    }
     
     // Cleanup on unmount
     return () => {
@@ -126,11 +148,16 @@ const AudioPlayer = ({ audioUrl, title, onEnded }) => {
     
     if (isPlaying) {
       audio.pause();
+      setIsPlaying(false);
     } else {
-      audio.play();
+      // Try to play and handle any errors
+      audio.play().catch(err => {
+        console.error("Error playing audio:", err);
+        setError(`Error playing audio: ${err.message}. Try reloading the page.`);
+        setIsPlaying(false);
+      });
+      setIsPlaying(true);
     }
-    
-    setIsPlaying(!isPlaying);
   };
   
   // Handle seeking

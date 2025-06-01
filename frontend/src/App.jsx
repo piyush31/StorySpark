@@ -129,6 +129,17 @@ function App() {
       // Call the backend API to generate the story
       const storyData = await voiceService.generateStory(storyParams);
       
+      // Log the audio path for debugging
+      console.log("Received audio path:", storyData.audio_path);
+      
+      // Make sure we have a valid audio path
+      if (!storyData.audio_path || storyData.audio_path === '#') {
+        console.warn("No valid audio path received, using placeholder");
+        storyData.audio_path = process.env.NODE_ENV === 'production' 
+          ? '/static/placeholders/story_audio.mp3'
+          : 'http://localhost:5000/static/placeholders/story_audio.mp3';
+      }
+      
       // Update the story data in state
       setGeneratedStory(storyData);
     } catch (error) {
@@ -376,24 +387,32 @@ function App() {
             </div>
             
             <AudioPlayer 
-              audioUrl={generatedStory.audio_path} 
+              audioUrl={generatedStory.audio_path || ''} 
               title={generatedStory.title}
               onEnded={handleAudioEnded}
             />
             
-            <div className="story-actions">
-              <button 
-                className={`download-button ${generatedStory.isDownloaded ? 'downloaded' : ''}`}
-                onClick={handleDownloadStory}
-                disabled={generatedStory.isDownloaded}
-              >
-                <span role="img" aria-label="Download">⬇️</span> 
-                {generatedStory.isDownloaded ? 'Downloaded' : 'Save for Offline'}
-              </button>
-              <button className="new-story-button" onClick={handleStartOver}>
-                Create Another Story
-              </button>
-            </div>
+            {generatedStory.audio_path ? (
+              <div className="story-actions">
+                <button 
+                  className={`download-button ${generatedStory.isDownloaded ? 'downloaded' : ''}`}
+                  onClick={handleDownloadStory}
+                  disabled={generatedStory.isDownloaded}
+                >
+                  <span role="img" aria-label="Download">⬇️</span> 
+                  {generatedStory.isDownloaded ? 'Downloaded' : 'Save for Offline'}
+                </button>
+                <button className="new-story-button" onClick={handleStartOver}>
+                  Create Another Story
+                </button>
+              </div>
+            ) : (
+              <div className="story-actions">
+                <button className="new-story-button" onClick={handleStartOver}>
+                  Create Another Story
+                </button>
+              </div>
+            )}
           </div>
         )}
       </main>

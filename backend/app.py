@@ -23,7 +23,15 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 
 # Initialize extensions
-CORS(app)
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",  # Allow all origins for ngrok compatibility
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+        "expose_headers": ["Content-Range", "X-Content-Range"],
+        "supports_credentials": True
+    }
+})
 jwt = JWTManager(app)
 init_db(app)
 
@@ -31,6 +39,28 @@ init_db(app)
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(voice_api, url_prefix='/api/voice')
 app.register_blueprint(auth_api, url_prefix='/api/auth')
+
+# Route for serving audio files from the static directory
+@app.route('/static/<path:filename>')
+def serve_static_audio(filename):
+    """Serve static audio files"""
+    try:
+        static_dir = os.path.join(os.path.dirname(__file__), '../static')
+        if not os.path.exists(os.path.join(static_dir, filename)):
+            app.logger.warning(f"Static file not found: {filename}")
+            # Return a 404 if the file doesn't exist
+            return jsonify({
+                'status': 'error',
+                'message': f'File not found: {filename}'
+            }), 404
+        
+        return send_from_directory(static_dir, filename)
+    except Exception as e:
+        app.logger.error(f"Error serving static file {filename}: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': f'Error serving file: {str(e)}'
+        }), 500
 
 @app.route('/')
 def hello_world():
@@ -55,9 +85,11 @@ def serve_static(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    # Get port from environment variable or default to 5000
-    port = int(os.environ.get('PORT', 5000))
+    # Get port from environment variable or default to 5001 (to match frontend proxy)
+    port = int(os.environ.get('PORT', 5001))
     # Get debug mode from environment variable or default to True
     debug = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 't')
-    # Run the Flask app
+    # Run the Flask app with host='0.0.0.0' to allow external connections (ngrok)
+    print(f"Starting StorySpark backend on host=0.0.0.0, port={port}")
+    print("This allows external connections via ngrok or other tunneling services")
     app.run(debug=debug, host='0.0.0.0', port=port)

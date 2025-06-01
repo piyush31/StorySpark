@@ -65,13 +65,15 @@ export default defineConfig({
   ],
   server: {
     port: 5173,
+    host: '0.0.0.0', // Allow external connections for ngrok
+    allowedHosts: 'all', // Allow all hosts for ngrok compatibility
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:5001',
         changeOrigin: true,
       },
-      '/generated': {
-        target: 'http://localhost:3001',
+      '/static': {
+        target: 'http://localhost:5001',
         changeOrigin: true,
       }
     }

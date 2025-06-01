@@ -3,9 +3,20 @@
  */
 
 // API base URL - automatically detects development vs production
-export const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
-  : 'http://localhost:5000/api';
+// Can be overridden with VITE_API_BASE_URL environment variable for ngrok usage
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (
+  process.env.NODE_ENV === 'production' 
+    ? '/api' 
+    : '/api'  // Use relative path for both environments since we're using Vite proxy
+);
+
+// Static assets URL - for accessing audio files and other static content
+// Can be overridden with VITE_STATIC_BASE_URL environment variable for ngrok usage
+export const STATIC_BASE_URL = import.meta.env.VITE_STATIC_BASE_URL || (
+  process.env.NODE_ENV === 'production'
+    ? '/static'
+    : '/static'  // Use relative path for both environments since we're using Vite proxy
+);
 
 // Default storyteller options
 export const STORYTELLERS = [
