@@ -58,6 +58,9 @@ def generate_story():
         # Track generation start time
         generation_start = datetime.utcnow()
         
+        # Check if Gemini model is initialized
+        logger.info(f"Gemini model initialized: {story_generator.gemini_model is not None}")
+        
         # Generate the story
         story_data = story_generator.generate_story(
             theme=data.get('theme'),
@@ -96,7 +99,7 @@ def generate_story():
                     cultural_elements=json.dumps(story_data.get('cultural_elements', {}))
                 )
                 
-                story.metadata = metadata
+                story.story_metadata = metadata
                 
                 # Save to database
                 db.session.add(story)

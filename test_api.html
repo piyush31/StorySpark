@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StorySpark API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        #storyDisplay {
+            margin-top: 20px;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>StorySpark API Test</h1>
+    <p>This page tests the StorySpark story generation API.</p>
+    
+    <div class="form-group">
+        <label for="theme">Theme:</label>
+        <input type="text" id="theme" value="friendship">
+    </div>
+    
+    <div class="form-group">
+        <label for="setting">Setting:</label>
+        <input type="text" id="setting" value="enchanted forest">
+    </div>
+    
+    <div class="form-group">
+        <label for="childName">Child's Name:</label>
+        <input type="text" id="childName" value="Sam">
+    </div>
+    
+    <div class="form-group">
+        <label for="ageGroup">Age Group:</label>
+        <select id="ageGroup">
+            <option value="3-5">3-5 years</option>
+            <option value="5-8" selected>5-8 years</option>
+            <option value="8-12">8-12 years</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="duration">Story Length:</label>
+        <select id="duration">
+            <option value="short">Short (3-5 min)</option>
+            <option value="medium" selected>Medium (5-10 min)</option>
+            <option value="long">Long (10-15 min)</option>
+        </select>
+    </div>
+    
+    <button id="generateButton">Generate Story</button>
+    
+    <div id="loading" class="loading">
+        <p>Generating your story... this may take a minute...</p>
+    </div>
+    
+    <div id="storyDisplay"></div>
+    
+    <script>
+        document.getElementById('generateButton').addEventListener('click', async () => {
+            const storyDisplay = document.getElementById('storyDisplay');
+            const loading = document.getElementById('loading');
+            
+            // Get values from form
+            const theme = document.getElementById('theme').value;
+            const setting = document.getElementById('setting').value;
+            const childName = document.getElementById('childName').value;
+            const ageGroup = document.getElementById('ageGroup').value;
+            const duration = document.getElementById('duration').value;
+            
+            // Show loading message
+            storyDisplay.innerHTML = '';
+            loading.style.display = 'block';
+            
+            try {
+                // Call the API
+                const response = await fetch('http://localhost:5000/api/voice/generate-story', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        theme,
+                        setting,
+                        child_name: childName,
+                        age_group: ageGroup,
+                        duration
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading message
+                loading.style.display = 'none';
+                
+                if (data.status === 'success') {
+                    const story = data.story;
+                    
+                    // Display the story
+                    storyDisplay.innerHTML = `
+                        <h2>${story.title}</h2>
+                        <p><strong>Duration:</strong> ${story.duration}</p>
+                        <p><strong>Created:</strong> ${story.created_at}</p>
+                        <pre>${story.text}</pre>
+                        <audio controls src="${story.audio_path}"></audio>
+                    `;
+                } else {
+                    storyDisplay.innerHTML = `<p>Error: ${data.message || 'Unknown error'}</p>`;
+                }
+            } catch (error) {
+                // Hide loading message
+                loading.style.display = 'none';
+                storyDisplay.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

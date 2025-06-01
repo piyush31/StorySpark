@@ -8,26 +8,20 @@ import logging
 import os
 import time
 import json
-import google.generativeai as genai
 from typing import Dict, List, Optional, Any, Union
+from google import genai
 from .voice_service import voice_service, SoundItem
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 # Set up Gemini API
-GEMINI_API_KEY = os.environ.get("GEMINI_KEY")  # Use GEMINI_KEY instead of GEMINI_API_KEY
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    logger.error("GEMINI_KEY not found in environment variables")
+    logger.error("GEMINI_API_KEY not found in environment variables")
     logger.info("Environment variables available: " + ", ".join([k for k in os.environ.keys() if not k.startswith("_")]))
 else:
-    logger.info(f"GEMINI_KEY found with length: {len(GEMINI_API_KEY)}")
-    
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    logger.info("Gemini API configured successfully")
-else:
-    logger.warning("Skipping Gemini API configuration due to missing API key")
+    logger.info(f"GEMINI_API_KEY found with length: {len(GEMINI_API_KEY)}")
 
 class StoryGenerator:
     """
@@ -37,31 +31,40 @@ class StoryGenerator:
     def __init__(self):
         """Initialize the story generator"""
         self.voice_service = voice_service
-        self.gemini_model = None
-        self.setup_gemini_model()
+        self.client = None
+        self.setup_gemini_client()
+        self.MODEL_ID = "gemini-2.0-flash"  # Use the 2.0 flash model for better performance
     
-    def setup_gemini_model(self):
-        """Set up the Gemini model for story generation"""
+    def setup_gemini_client(self):
+        """Set up the Gemini client for story generation"""
         try:
             # Check if API key is available
             if not GEMINI_API_KEY:
                 logger.error("GEMINI_API_KEY not found in environment variables")
-                self.gemini_model = None
+                self.client = None
                 return
                 
-            # Initialize Gemini model - using the flash model for faster responses
-            self.gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+            # Initialize Gemini client
+            self.client = genai.Client(api_key=GEMINI_API_KEY)
             
-            # Test the model with a simple prompt to verify it works
-            test_response = self.gemini_model.generate_content("Hello")
-            if test_response and hasattr(test_response, 'text'):
-                logger.info("Gemini model initialized and tested successfully")
-            else:
-                logger.error("Gemini model initialization failed: Test response invalid")
-                self.gemini_model = None
+            # Test the client with a simple prompt to verify it works
+            try:
+                test_response = self.client.models.generate_content(
+                    model=self.MODEL_ID,
+                    contents="Hello",
+                )
+                if test_response and hasattr(test_response, 'text'):
+                    logger.info("Gemini client initialized and tested successfully")
+                else:
+                    logger.error("Gemini client initialization failed: Test response invalid")
+                    self.client = None
+            except Exception as e:
+                logger.error(f"Error testing Gemini client: {str(e)}")
+                self.client = None
+                
         except Exception as e:
-            logger.error(f"Failed to initialize Gemini model: {str(e)}")
-            self.gemini_model = None
+            logger.error(f"Failed to initialize Gemini client: {str(e)}")
+            self.client = None
     
     def generate_story(
         self, 
@@ -106,9 +109,23 @@ class StoryGenerator:
         
         try:
             # Generate story using Gemini
-            if self.gemini_model:
+            if self.client:
                 logger.info(f"Sending prompt to Gemini: {prompt[:100]}...")
-                story_response = self.gemini_model.generate_content(prompt)
+                
+                # Set up generation configuration
+                generation_config = {
+                    'temperature': 0.0,  # Lower temperature for more deterministic responses
+                    'top_p': 0.95,
+                    'top_k': 40,
+                }
+                
+                # Call the Gemini API
+                story_response = self.client.models.generate_content(
+                    model=self.MODEL_ID,
+                    contents=prompt,
+                    config=generation_config
+                )
+                
                 story_content = story_response.text
                 logger.info(f"Received response from Gemini: {len(story_content)} characters")
                 
@@ -116,8 +133,8 @@ class StoryGenerator:
                 story_title, story_text = self._parse_story_content(story_content, theme, setting)
                 logger.info(f"Parsed story title: {story_title}")
             else:
-                # Fallback if model isn't available
-                logger.warning("Gemini model not available, using fallback story generation")
+                # Fallback if client isn't available
+                logger.warning("Gemini client not available, using fallback story generation")
                 story_title = f"The Adventure in the {setting or 'Magical Land'}"
                 story_text = self._generate_fallback_story(theme, setting, child_name, age_group)
         except Exception as e:
@@ -317,7 +334,7 @@ class StoryGenerator:
             return "10 minutes"
         else:
             return "15+ minutes"
-        
+    
     def narrate_existing_story(self, story_id: Union[int, str]) -> Dict[str, Any]:
         """
         Generate narration for an existing story
@@ -552,6 +569,3 @@ The wise old owl taught everyone that {theme} was the most important value of al
 And from that day forward, {theme} filled the {setting} with joy and happiness.
 
 The end."""
-
-# Create an instance of the StoryGenerator class
-story_generator = StoryGenerator()

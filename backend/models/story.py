@@ -26,7 +26,7 @@ class Story(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Relationships
-    metadata = db.relationship('StoryMetadata', backref='story', lazy=True, uselist=False)
+    story_metadata = db.relationship('StoryMetadata', backref='story', lazy=True, uselist=False)
     
     def to_dict(self):
         """Convert story object to dictionary"""
@@ -41,7 +41,7 @@ class Story(db.Model):
             'language': self.language,
             'created_at': self.created_at.isoformat(),
             'user_id': self.user_id,
-            'metadata': self.metadata.to_dict() if self.metadata else None
+            'metadata': self.story_metadata.to_dict() if self.story_metadata else None
         }
 
 
