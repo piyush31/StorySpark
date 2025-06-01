@@ -127,7 +127,7 @@ class VoiceService:
         Returns:
             Dictionary mapping effect names to file paths
         """
-        effects_dir = os.path.join(os.path.dirname(__file__), '../../../static/effects')
+        effects_dir = os.path.join(os.path.dirname(__file__), '../../static/effects')
         os.makedirs(effects_dir, exist_ok=True)
         
         effects = {
@@ -170,7 +170,7 @@ class VoiceService:
                                 self.available_voices[0])
         
         # Create output directory if it doesn't exist
-        output_dir = os.path.join(os.path.dirname(__file__), '../../../static/generated')
+        output_dir = os.path.join(os.path.dirname(__file__), '../../static/generated')
         os.makedirs(output_dir, exist_ok=True)
         
         # Generate a unique filename based on the content and voice
