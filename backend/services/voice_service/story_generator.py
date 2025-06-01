@@ -400,6 +400,11 @@ class StoryGenerator:
         Make the story engaging, age-appropriate, and with a clear beginning, middle, and end.
         Use simple language that children can understand.
         Divide the story into paragraphs for better readability.
+        The story should be inspired from Indian folk lore, fairy tales, or modern children's literature.
+        Children story books like panchatantra, hitopadesh, akbar birbal, tenali raman, etc. should be used as inspiration.
+        The names should be Indian names, and the story should reflect Indian culture and values.
+        The story should be written in English, but can include some Hindi or regional words where appropriate.
+        The story should be formatted as follows:
         Start with a title on the first line prefixed with "Title: ".
         
         The story should convey positive values and end with a meaningful lesson.
