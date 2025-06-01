@@ -103,7 +103,7 @@ class VoiceService:
                 "gender": "female",
                 "age": "elderly",
                 "language": "en-US",
-                "google_voice": "en-US-Standard-C",
+                "google_voice": "en-US-Chirp3-HD-Charon",
                 "speaking_rate": 0.85
             },
             {
@@ -112,7 +112,7 @@ class VoiceService:
                 "gender": "female",
                 "age": "middle",
                 "language": "en-US",
-                "google_voice": "en-US-Standard-F",
+                "google_voice": "en-US-Chirp3-HD-Charon",
                 "speaking_rate": 1.0
             }
         ]

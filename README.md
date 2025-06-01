@@ -4,7 +4,7 @@ StorySpark is a full-stack Progressive Web App (PWA) for interactive storytellin
 
 ## Features
 
-- **Voice-Enabled Storytelling**: Uses Google's Chirp text-to-speech technology for natural-sounding narration
+- **Voice-Enabled Storytelling**: Uses Google's Chirp3 text-to-speech technology for natural-sounding narration
 - **AI-Powered Stories**: Generates unique stories using Google's Gemini 2.0-flash model
 - **Child-Friendly Interface**: Designed specifically for children with appropriate UI elements
 - **Offline Capabilities**: Stories can be saved for offline use
@@ -217,5 +217,5 @@ The StorySpark app includes advanced audio processing capabilities:
 - **Frontend**: React, Vite
 - **PWA**: Workbox, Vite PWA Plugin
 - **Audio Processing**: pydub
-- **TTS**: Google Cloud Text-to-Speech (Chirp)
+- **TTS**: Google Cloud Text-to-Speech (Chirp3)
 - **AI**: Google Gemini 2.0-flash

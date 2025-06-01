@@ -35,7 +35,7 @@ def main():
         # Build the voice request
         voice = texttospeech.VoiceSelectionParams(
             language_code="en-US",
-            name="en-US-Chirp-3-HD-Charon",
+            name="en-US-Chirp3-HD-Charon",
             ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
         )
         
