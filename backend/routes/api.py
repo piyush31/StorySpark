@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models.story import Story, StoryMetadata, db
-from models.user import User
-from utils.auth import get_current_user
+from ..models.story import Story, StoryMetadata, db
+from ..models.user import User
+from ..utils.auth import get_current_user
 
 # Create a Blueprint for API routes
 api = Blueprint('api', __name__)

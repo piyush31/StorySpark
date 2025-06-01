@@ -5,16 +5,16 @@ import os
 import time
 from datetime import timedelta
 from dotenv import load_dotenv
-from routes.api import api
-from routes.voice_api import voice_api
-from routes.auth_api import auth_api
-from models import init_db
+from .routes.api import api
+from .routes.voice_api import voice_api
+from .routes.auth_api import auth_api
+from .models import init_db
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='dist')
+app = Flask(__name__, static_folder='static')
 
 # Configure app
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', 'sqlite:///storyspark.db')

@@ -1,0 +1,30 @@
+runtime: python39
+entrypoint: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 backend.app:app
+
+env_variables:
+  FLASK_ENV: production
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+
+handlers:
+  - url: /static
+    static_dir: backend/static
+    secure: always
+
+  - url: /.*
+    script: auto
+    secure: always
+
+skip_files:
+  - ^(.*/)?#.*#$
+  - ^(.*/)?.*~$
+  - ^(.*/)?.*\.py[co]$
+  - ^(.*/)?.*/RCS/.*$
+  - ^(.*/)?\..*$
+  - ^(.*/)?tests/.*$
+  - ^(.*/)?test_.*$
+  - node_modules/
+  - frontend/

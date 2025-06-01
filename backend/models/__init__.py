@@ -7,8 +7,8 @@ Models include:
 - StoryMetadata: Additional data about generated stories
 """
 
-from models.user import db, bcrypt, User, UserPreference
-from models.story import Story, StoryMetadata
+from .user import db, bcrypt, User, UserPreference
+from .story import Story, StoryMetadata
 
 # Initialize database and related modules
 def init_db(app):

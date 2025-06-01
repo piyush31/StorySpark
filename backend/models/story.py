@@ -5,7 +5,7 @@ This module defines the Story and StoryMetadata models for managing
 generated stories and related data.
 """
 from datetime import datetime
-from models.user import db
+from .user import db
 
 class Story(db.Model):
     """Model for storing generated stories"""

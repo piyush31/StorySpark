@@ -13,7 +13,7 @@ from flask_jwt_extended import (
 import datetime
 import logging
 from email_validator import validate_email, EmailNotValidError
-from models.user import User, UserPreference, db
+from ..models.user import User, UserPreference, db
 
 # Configure logging
 logger = logging.getLogger(__name__)

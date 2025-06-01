@@ -10,10 +10,10 @@ import json
 import logging
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from services.voice_service import voice_service, story_generator
-from models.story import Story, StoryMetadata, db
-from models.user import User, UserPreference
-from utils.auth import get_current_user
+from ..services.voice_service import voice_service, story_generator
+from ..models.story import Story, StoryMetadata, db
+from ..models.user import User, UserPreference
+from ..utils.auth import get_current_user
 
 # Configure logging
 logger = logging.getLogger(__name__)
